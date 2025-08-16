@@ -1,0 +1,77 @@
+env_list = [
+    "py3.13",
+    "style",
+    "typing",
+    "docs"
+]
+
+[env_run_base]
+description = "pytest on latest dependency versions"
+runner = "uv-venv-lock-runner"
+package = "wheel"
+wheel_build_env = ".pkg"
+constrain_package_deps = true
+use_frozen_constraints = true
+dependency_groups = ["tests"]
+commands = [
+    [
+        "pytest",
+        "-v",
+        "--tb=short",
+        "--basetemp={env_tmp_dir}",
+        {replace = "posargs", default = [], extend = true}
+    ]
+]
+
+[env.style]
+description = "run all pre-commit hooks on all files"
+dependency_groups = ["pre-commit"]
+skip_install = true
+commands = [["pre-commit", "run", "--all-files"]]
+
+[env.typing]
+description = "run static type checkers"
+dependency_groups = ["typing"]
+commands = [
+    ["mypy"]
+]
+
+[env.docs]
+description = "build docs"
+dependency_groups = ["docs"]
+commands = [["sphinx-build", "-E", "-W", "-b", "dirhtml", "docs", "docs/_build/dirhtml"]]
+
+[env.docs-auto]
+description = "continuously rebuild docs and start a local server"
+dependency_groups = ["docs", "docs-auto"]
+commands = [["sphinx-autobuild", "-W", "-b", "dirhtml", "--watch", "src", "docs", "docs/_build/dirhtml"]]
+
+[env.update-actions]
+description = "update GitHub Actions pins"
+labels = ["update"]
+dependency_groups = ["gha-update"]
+skip_install = true
+commands = [["gha-update"]]
+
+[env.update-linter_rules]
+description = "update ruff rules"
+labels = ["update"]
+dependency_groups = ["dev"]
+no_default_groups = true
+skip_install = true
+commands = [["python", "scripts/rules.py", "--update"]]
+
+[env.update-pre_commit]
+description = "update pre-commit pins"
+labels = ["update"]
+dependency_groups = ["pre-commit"]
+skip_install = true
+commands = [["pre-commit", "autoupdate", "--freeze", "-j4"]]
+
+[env.update-requirements]
+description = "update uv lock"
+labels = ["update"]
+dependency_groups = []
+no_default_groups = true
+skip_install = true
+commands = [["uv", "lock", {replace = "posargs", default = ["-U"], extend = true}]]

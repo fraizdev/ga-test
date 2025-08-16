@@ -1,0 +1,77 @@
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
+
+[project]
+name = "client"
+dynamic = ["version"]
+description = "project client"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+keywords = []
+authors = [
+  {name = "fraiz", email = "fraiz.dev@gmail.com"}
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "License :: OSI Approved :: MIT License",
+  "Natural Language :: English",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: Implementation :: CPython"
+]
+dependencies = [
+  "attrs>=25.3.0",
+  "structlog>=25.4.0"
+]
+
+[project.urls]
+Documentation = "https://github.com/fraiz/client#readme"
+Issues = "https://github.com/fraiz/client/issues"
+Source = "https://github.com/fraiz/client"
+
+[tool.coverage.paths]
+source = ["src", "*/site-packages"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:"
+]
+
+[tool.coverage.run]
+branch = true
+source = ["client", "tests"]
+
+[tool.hatch.build.hooks.version]
+path = "src/client/_version.py"
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+
+[tool.mypy]
+python_version = "3.13"
+files = ["src", "tests"]
+exclude = '^scripts'
+show_error_codes = true
+pretty = true
+strict = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = [
+  "error"
+]
+
+[tool.uv-dynamic-versioning]
+vcs = "git"
+style = "pep440"
+bump = true
+metadata = false
+pattern-prefix = "client-"

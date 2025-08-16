@@ -1,0 +1,54 @@
+ci:
+  uv: true
+
+default_language_version:
+  python: python3
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: 54a455f7ce629598b7535ff828fd5fb796f4b83f  # frozen: v0.12.9
+    hooks:
+      - id: ruff
+        name: Chk Ruff
+        args: [--fix, --exit-non-zero-on-fix]
+      - id: ruff-format
+        name: Fmt Ruff
+
+  -   repo: https://github.com/PyCQA/bandit
+      rev: 2d0b675b04c80ae42277e10500db06a0a37bae17  # frozen: 1.8.6
+      hooks:
+      - id: bandit
+        name: Chk Bandit
+        args: [-ll, -il]
+        files: \.(py|spec)$
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: 37bfa06d791fd38fb4e54910b36a2ff57641b074 # frozen: v3.20.0
+    hooks:
+      - id: pyupgrade
+        args: [--py313-plus]
+        stages: [manual]
+
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 1fbedf73c5ee2f6d6cbe1e9ba9c738b0458f29ce  # frozen: 0.8.11
+    hooks:
+      - id: uv-lock
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c  # frozen: v6.0.0
+    hooks:
+      - id: check-merge-conflict
+        name : Check for merge conflicts
+      - id: check-toml
+        name: Check TOML file syntax
+      - id: check-yaml
+        name: Check YAML file syntax
+      - id: fix-byte-order-marker
+        name: Fix byte order marker
+      - id: end-of-file-fixer
+        name: Fix End-of-files
+      - id: mixed-line-ending
+        name: Fix Line endings
+        args: [--fix=auto]
+      - id: trailing-whitespace
+        name: Fix Trailing whitespace

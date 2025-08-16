@@ -1,0 +1,110 @@
+fix = true
+unsafe-fixes = true
+line-length = 100
+output-format = "grouped"
+target-version = "py313"
+exclude = [
+  ".git",
+  ".mypy_cache",
+  ".pytest_cache",
+  ".ruff_cache",
+  ".venv",
+  ".tox",
+  "build",
+  "dist",
+  "node_modules"
+]
+
+[format]
+preview = true
+quote-style = "single"
+docstring-code-format = true
+docstring-code-line-length = 80
+
+[lint]
+preview = true
+select = [
+  "YTT",  # flake8-2020
+  "ANN",  # flake8-annotations
+  "S",  # flake8-bandit
+  "BLE",  # flake8-blind-except
+  "FBT",  # flake8-boolean-trap
+  "B",  # flake8-bugbear
+  "A",  # flake8-builtins
+  "COM",  # flake8-commas
+  "C4",  # flake8-comprehensions
+  "T10",  # flake8-debugger
+  "EM",  # flake8-errmsg
+  "EXE",  # flake8-executable
+  "INT",  # flake8-gettext
+  "ISC",  # flake8-implicit-str-concat
+  "ICN",  # flake8-import-conventions
+  "LOG",  # flake8-logging
+  "G",  # flake8-logging-format
+  "INP",  # flake8-no-pep420
+  "PIE",  # flake8-pie
+  "T20",  # flake8-print
+  "PYI",  # flake8-pyi
+  "PT",  # flake8-pytest-style
+  "Q",  # flake8-quotes
+  "RSE",  # flake8-raise
+  "RET",  # flake8-return
+  "SLF",  # flake8-self
+  "SIM",  # flake8-simplify
+  "SLOT",  # flake8-slots
+  "TID",  # flake8-tidy-imports
+  "TC",  # flake8-type-checking
+  "ARG",  # flake8-unused-arguments
+  "PTH",  # flake8-use-pathlib
+  "FLY",  # flynt
+  "I",  # isort
+  "C90",  # mccabe
+  "N",  # pep8-naming
+  "PERF",  # Perflint
+  "E",  # pycodestyle(Error)
+  "W",  # pycodestyle(Warning)
+  "F",  # Pyflakes
+  "PGH",  # pygrep-hooks
+  "PLC",  # Pylint(Convention)
+  "PLE",  # Pylint(Error)
+  "PLR",  # Pylint(Refactor)
+  "PLW",  # Pylint(Warning)
+  "UP",  # pyupgrade
+  "FURB",  # refurb
+  "RUF",  # Ruff-specific rules
+  "TRY"  # tryceratops
+]
+ignore = [
+  "S404",  # suspicious-subprocess-import
+  "S603",  # subprocess-without-shell-equals-true
+  "COM812",  # missing-trailing-comma
+  "ISC001",  # single-line-implicit-string-concatenation
+  "Q000",  # bad-quotes-inline-string
+  "Q003",  # avoidable-escaped-quote
+  "TC006",  # runtime-cast-value
+  "PLC0415"  # import-outside-top-level
+]
+
+[lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[lint.flake8-pytest-style]
+fixture-parentheses = false
+mark-parentheses = false
+
+[lint.isort]
+known-first-party = [
+  "tests"
+]
+
+[lint.per-file-ignores]
+"**/scripts/*" = [
+  "INP001"  # implicit-namespace-package
+]
+"**/tests/**/*" = [
+  "SLF001",  # private-member-access
+  "S101"  # assert
+]
+"**/gui/*" = [
+  "E402"  # module-import-not-at-top-of-file
+]

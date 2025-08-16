@@ -1,0 +1,47 @@
+fix = true
+unsafe-fixes = true
+line-length = {{ line_length }}
+output-format = 'grouped'
+target-version = '{{ python_version }}'
+exclude = [
+  %{ for exclude in excludes %}
+  "{{ exclude }}"
+  %{ endfor %}
+]
+
+[format]
+preview = {{ format_preview }}
+quote-style = {{ quote_style }}
+docstring-code-format = true
+docstring-code-line-length = {{ docstring_line_length }}
+
+[lint]
+preview = {{ lint_preview }}
+select = [
+  %{ for name, code in select_rules %}
+  "{{ code }}" # {{ name }}
+  %{ endfor %}
+]
+ignore = [
+  %{ for name, code in ignore_rules %}
+  "{{ code }}" # {{ name }}
+  %{ endfor %}
+]
+
+[lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[lint.flake8-pytest-style]
+fixture-parentheses = false
+mark-parentheses = false
+
+[lint.isort]
+known-first-party = ["{{ project_name }}", "tests"]
+
+[lint.per-file-ignores]
+"**/scripts/*" = [
+  "INP001" # implicit-namespace-package
+]
+"**/tests/**/*" = [
+  "S101" # assert
+]

@@ -1,0 +1,434 @@
+{
+	"media": "video",
+	"shells": [
+		"open",
+		"play"
+	],
+	"categories": [
+		{
+			"name": "Uncompressed formats",
+			"formats": [
+				{
+					"label": "Raw YUV Video",
+					"extensions": [
+						".yuv"
+					]
+				},
+				{
+					"label": "YUV4MPEG2 Video",
+					"extensions": [
+						".y4m"
+					]
+				}
+			]
+		},
+		{
+			"name": "MPEG formats",
+			"formats": [
+				{
+					"mime": "video/vnd.dlna.mpeg-tts",
+					"label": "MPEG-2 Transport Stream",
+					"extensions": [
+						".m2ts",
+						".m2t",
+						".mts",
+						".mtv",
+						".ts",
+						".tsv",
+						".tsa",
+						".tts",
+						".trp"
+					]
+				},
+				{
+					"mime": "video/mpeg",
+					"label": "MPEG Video",
+					"extensions": [
+						".mpeg",
+						".mpg",
+						".mpe",
+						".mpeg2",
+						".m1v",
+						".m2v",
+						".mp2v",
+						".mpv",
+						".mpv2",
+						".mod",
+						".tod"
+					]
+				},
+				{
+					"mime": "video/dvd",
+					"label": "Video Object",
+					"extensions": [
+						".vob",
+						".vro"
+					]
+				},
+				{
+					"label": "Enhanced VOB",
+					"extensions": [
+						".evob",
+						".evo"
+					]
+				},
+				{
+					"mime": "video/mp4",
+					"label": "MPEG-4 Video",
+					"extensions": [
+						".mpeg4",
+						".m4v",
+						".mp4",
+						".mp4v",
+						".mpg4"
+					]
+				},
+				{
+					"mime": "video/h264",
+					"label": "Raw H.264/AVC Video",
+					"extensions": [
+						".h264",
+						".avc",
+						".x264",
+						".264"
+					]
+				},
+				{
+					"mime": "video/hevc",
+					"label": "Raw H.265/HEVC Video",
+					"extensions": [
+						".hevc",
+						".h265",
+						".x265",
+						".265"
+					]
+				}
+			]
+		},
+		{
+			"name": "Xiph formats",
+			"formats": [
+				{
+					"label": "Ogg Video",
+					"variants": [
+						{
+							"mime": "video/ogg",
+							"extensions": [
+								".ogv",
+								".ogm"
+							]
+						},
+						{
+							"mime": "application/ogg",
+							"extensions": [
+								".ogx"
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Matroska formats",
+			"formats": [
+				{
+					"mime": "video/x-matroska",
+					"label": "Matroska Video",
+					"extensions": [
+						".mkv"
+					]
+				},
+				{
+					"mime": "video/x-matroska",
+					"label": "Matroska 3D Video",
+					"extensions": [
+						".mk3d"
+					]
+				},
+				{
+					"mime": "video/webm",
+					"label": "WebM Video",
+					"extensions": [
+						".webm"
+					]
+				}
+			]
+		},
+		{
+			"name": "Misc formats",
+			"formats": [
+				{
+					"mime": "video/avi",
+					"label": "Video Clip",
+					"extensions": [
+						".avi",
+						".vfw"
+					]
+				},
+				{
+					"label": "DivX Video",
+					"extensions": [
+						".divx"
+					]
+				},
+				{
+					"label": "3ivx Video",
+					"extensions": [
+						".3iv"
+					]
+				},
+				{
+					"label": "XVID Video",
+					"extensions": [
+						".xvid"
+					]
+				},
+				{
+					"label": "NUT Video",
+					"extensions": [
+						".nut"
+					]
+				},
+				{
+					"mime": "video/flc",
+					"label": "FLIC Video",
+					"extensions": [
+						".flic",
+						".fli",
+						".flc"
+					]
+				},
+				{
+					"label": "Nullsoft Streaming Video",
+					"extensions": [
+						".nsv"
+					]
+				},
+				{
+					"mime": "application/gxf",
+					"label": "General Exchange Format",
+					"extensions": [
+						".gxf"
+					]
+				},
+				{
+					"mime": "application/mxf",
+					"label": "Material Exchange Format",
+					"extensions": [
+						".mxf"
+					]
+				}
+			]
+		},
+		{
+			"name": "Windows Media formats",
+			"formats": [
+				{
+					"mime": "video/x-ms-wm",
+					"label": "Windows Media Video",
+					"extensions": [
+						".wm"
+					]
+				},
+				{
+					"mime": "video/x-ms-wmv",
+					"label": "Windows Media Video",
+					"extensions": [
+						".wmv"
+					]
+				},
+				{
+					"mime": "video/x-ms-asf",
+					"label": "Windows Media Video",
+					"extensions": [
+						".asf"
+					]
+				},
+				{
+					"label": "Microsoft Recorded TV Show",
+					"extensions": [
+						".dvr-ms",
+						".dvr"
+					]
+				},
+				{
+					"label": "Windows Recorded TV Show",
+					"extensions": [
+						".wtv"
+					]
+				}
+			]
+		},
+		{
+			"name": "DV formats",
+			"formats": [
+				{
+					"label": "DV Video",
+					"extensions": [
+						".dv",
+						".hdv"
+					]
+				}
+			]
+		},
+		{
+			"name": "Flash Video formats",
+			"formats": [
+				{
+					"mime": "video/x-flv",
+					"label": "Flash Video",
+					"extensions": [
+						".flv"
+					]
+				},
+				{
+					"mime": "video/mp4",
+					"label": "Flash Video",
+					"extensions": [
+						".f4v"
+					]
+				}
+			]
+		},
+		{
+			"name": "QuickTime formats",
+			"formats": [
+				{
+					"mime": "video/quicktime",
+					"label": "QuickTime Video",
+					"extensions": [
+						".qt",
+						".mov"
+					]
+				},
+				{
+					"mime": "video/quicktime",
+					"label": "QuickTime HD Video",
+					"extensions": [
+						".hdmov"
+					]
+				}
+			]
+		},
+		{
+			"name": "Real Media formats",
+			"formats": [
+				{
+					"mime": "application/vnd.rn-realmedia",
+					"label": "Real Media Video",
+					"extensions": [
+						".rm"
+					]
+				},
+				{
+					"mime": "application/vnd.rn-realmedia-vbr",
+					"label": "Real Media Video",
+					"extensions": [
+						".rmvb"
+					]
+				}
+			]
+		},
+		{
+			"name": "3GPP formats",
+			"formats": [
+				{
+					"mime": "video/3gpp",
+					"label": "3GPP Video",
+					"extensions": [
+						".3gpp",
+						".3gp"
+					]
+				},
+				{
+					"mime": "video/3gpp2",
+					"label": "3GPP Video",
+					"extensions": [
+						".3gp2",
+						".3g2"
+					]
+				}
+			]
+		},
+		{
+			"name": "AMV format",
+			"formats": [
+				{
+					"mime": "video/amv",
+					"label": "AMV Video",
+					"extensions": [
+						".amv"
+					]
+				}
+			]
+		},
+		{
+			"name": "Bink format",
+			"formats": [
+				{
+					"label": "Bink Video",
+					"extensions": [
+						".bik"
+					]
+				}
+			]
+		},
+		{
+			"name": "DPG format",
+			"formats": [
+				{
+					"label": "DPG Video",
+					"extensions": [
+						".dpg"
+					]
+				}
+			]
+		},
+		{
+			"name": "K3G format",
+			"formats": [
+				{
+					"label": "K3G Video",
+					"extensions": [
+						".k3g"
+					]
+				}
+			]
+		},
+		{
+			"name": "MPV4 format",
+			"formats": [
+				{
+					"mime": "video/mp4v-es",
+					"label": "MPV4 Video",
+					"extensions": [
+						".mpv4"
+					]
+				}
+			]
+		},
+		{
+			"name": "MQV format",
+			"formats": [
+				{
+					"label": "MQV Video",
+					"extensions": [
+						".mqv"
+					]
+				}
+			]
+		},
+		{
+			"name": "TP format",
+			"formats": [
+				{
+					"mime": "video/mp2t",
+					"label": "TP Transport Stream Video",
+					"extensions": [
+						".tp"
+					]
+				}
+			]
+		}
+	]
+}

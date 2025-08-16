@@ -1,0 +1,145 @@
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ga-test"
+dynamic = ["version"]
+description = "Github action test"
+readme = "README.md"
+requires-python = ">=3.13"
+license = "MIT"
+keywords = []
+authors = [
+    {name = "fraizdev", email = "fraiz.dev@gmail.com"}
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: Implementation :: CPython"
+]
+dependencies = [
+    "attrs>=25.3.0",
+    "blake3>=1.0.5",
+    "cattrs>=25.1.1",
+    "click>=8.1.8",
+    "client",
+    "colorama>=0.4.6",
+    "pygobject>=3.52.3",
+    "rich>=14.0.0",
+    "typer>=0.15.4",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.12.0",
+    "tox-uv>=1.26.0",
+]
+docs = [
+    "myst-parser>=4.0.1",
+    "pallets-sphinx-themes>=2.3.0",
+    "sphinx>=8.2.3",
+    "sphinx-tabs>=3.4.7",
+    "sphinxcontrib-log-cabinet>=1.0.1",
+]
+docs-auto = [
+    "sphinx-autobuild>=2024.10.3",
+]
+gha-update = [
+    "gha-update>=0.2.0",
+]
+gtk = [
+    "gvsbuild>=2025.8.0",
+]
+pre-commit = [
+    "pre-commit-uv>=4.1.4"
+]
+release = [
+    "jinja2>=3.1.6",
+    "nuitka",
+    "pytz>=2025.2",
+]
+tests = [
+    "pytest>=8.4.1",
+    "pytest-mock>=3.14.1"
+]
+typing = [
+    "mypy>=1.16.1",
+    "pygobject-stubs>=2.13.0",
+    "pyright>=1.1.402",
+]
+
+[project.scripts]
+gat = "gat.gtk4:start"
+
+[project.urls]
+Homepage = "http://ga-test.org"
+Documentation = "https://github.com/fraizdev/ga-test#readme"
+Issues = "https://github.com/fraizdev/ga-test/issues"
+Source = "https://github.com/fraizdev/ga-test"
+
+[tool.coverage.paths]
+source = ["src", "*/site-packages"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_lines = [
+    "no cov",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:"
+]
+
+[tool.coverage.run]
+branch = true
+source = ["ga-test", "tests"]
+
+[tool.hatch.build.hooks.version]
+path = "src/ga-test/_version.py"
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+
+[tool.mypy]
+python_version = "3.13"
+files = ["src", "scripts", "libs/client/src"]
+show_error_codes = true
+show_column_numbers = true
+pretty = true
+strict = true
+
+[[tool.mypy.overrides]]
+module = [
+    "client.*",
+    "distro",
+    "jinja2",
+    "pytz"
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "libs/*/tests"]
+filterwarnings = [
+    "error"
+]
+
+[tool.uv]
+default-groups = ["dev", "pre-commit", "tests", "typing"]
+
+[tool.uv.sources]
+client = {workspace = true}
+
+[tool.uv.workspace]
+members = [
+    "libs/*"
+]
+
+[tool.uv-dynamic-versioning]
+vcs = "git"
+style = "pep440"
+bump = true
+metadata = false

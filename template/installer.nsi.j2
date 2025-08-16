@@ -1,0 +1,252 @@
+!define NAME "{{ name }}"
+!define VERSION "{{ version }}"
+!define DESCRIPTION "{{ description }}"
+!define INSTALLER_VERSION "{{ installer_version }}"
+!define ICON "{{ icon }}"
+
+!include FileFunc.nsh
+
+!define EXECUTABLE "$INSTDIR\{{ name }}.exe"
+
+{% for arch in ["x64", "x86"] %}
+!If "${arch}" == "{{ arch }}"
+    !define INSTALLER_FILENAME "${NAME}-${VERSION}-{{ 'win64' if arch == 'x64' else 'win32' }}-setup.exe"
+    InstallDir "$PROGRAMFILES{{ '64' if arch == 'x64' else '32' }}\${NAME}"
+    !define UNINST_PROG_ID_KEY "HKLM{{ '64' if arch == 'x64' else '' }}"
+!EndIf
+{%- endfor %}
+
+# Set default compressor
+SetCompressor /FINAL /SOLID lzma
+SetCompressorDictSize 64
+
+# --- Interface settings ---
+# Modern User Interface 2
+!include MUI2.nsh
+# Installer
+!define MUI_ICON "${ICON}"
+!define MUI_HEADERIMAGE
+!define MUI_HEADERIMAGE_RIGHT
+!define MUI_HEADERIMAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Header\win.bmp"
+!define MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\win.bmp"
+!define MUI_FINISHPAGE_NOAUTOCLOSE
+!define MUI_ABORTWARNING
+# Start Menu Folder Page Configuration
+!define MUI_STARTMENUPAGE_DEFAULTFOLDER ${NAME}
+!define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCR"
+!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${NAME}"
+!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
+# Uninstaller
+!define MUI_UNICON "${ICON}"
+!define MUI_HEADERIMAGE_UNBITMAP "${NSISDIR}\Contrib\Graphics\Header\win.bmp"
+!define MUI_WELCOMEFINISHPAGE_UNBITMAP "${NSISDIR}\Contrib\Graphics\Wizard\win.bmp"
+!define MUI_UNFINISHPAGE_NOAUTOCLOSE
+
+!define MUI_FINISHPAGE_SHOWREADME ""
+!define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
+!define MUI_FINISHPAGE_SHOWREADME_TEXT "Create Desktop Shortcut"
+!define MUI_FINISHPAGE_SHOWREADME_FUNCTION finishpageaction
+
+# --- Start of Modern User Interface ---
+Var StartMenuFolder
+# Welcome, License & Components pages
+!insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_LICENSE "{{ license }}"
+# Let the user select the installation directory
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
+# Run installation
+!insertmacro MUI_PAGE_INSTFILES
+!define MUI_FINISHPAGE_RUN "${EXECUTABLE}"
+# Display 'finished' page
+!insertmacro MUI_PAGE_FINISH
+# Uninstaller pages
+!insertmacro MUI_UNPAGE_INSTFILES
+# Language files
+!insertmacro MUI_LANGUAGE "English"
+
+# --- Functions ---
+
+Function .onInit
+    # Check for running installer instance.
+    System::Call 'kernel32::CreateMutex(i 0, i 0, t "${INSTALLER_FILENAME}") i .r1 ?e'
+    Pop $R0
+    StrCmp $R0 0 +3
+        MessageBox MB_OK|MB_ICONEXCLAMATION "The installer is already running."
+        Abort
+
+    # Check for running ${NAME} instance.
+    System::Call 'kernel32::OpenMutex(i 0x100000, b 0, t "${NAME}") i .R0'
+    IntCmp $R0 0 +4
+        System::Call 'kernel32::CloseHandle(i $R0)'
+        MessageBox MB_OK|MB_ICONEXCLAMATION "${NAME} is running. Please close it first" /SD IDOK
+        Abort
+FunctionEnd
+
+Function un.onUninstSuccess
+    HideWindow
+    MessageBox MB_ICONINFORMATION|MB_OK "$(^Name) was successfully removed from your computer." /SD IDOK
+FunctionEnd
+
+Function un.onInit
+    MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "Do you want to completely remove $(^Name)?" /SD IDYES IDYES +2
+    Abort
+FunctionEnd
+
+Function finishpageaction
+    CreateShortCut "$DESKTOP\${DESCRIPTION}.lnk" "${EXECUTABLE}"
+FunctionEnd
+
+# --- Installation sections ---
+!define UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${NAME}"
+!define APP_PATHS_KEY "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\${NAME}.exe"
+!define APPLICATION_KEY "SOFTWARE\Classes\Applications\${NAME}.exe"
+!define MEDIA_CLIENT_KEY "SOFTWARE\Clients\Media\${NAME}"
+!define FILE_ASSOC_KEY "SOFTWARE\Classes\SystemFileAssociations\{{ media }}\OpenWithList\${NAME}.exe"
+!define PROG_ID_KEY "SOFTWARE\Classes\${NAME}"
+
+!define UNINST_FILENAME "$INSTDIR\${NAME}-uninst.exe"
+
+!define START_MENU_FOLDER "$SMPROGRAMS\$StartMenuFolder"
+!define START_MENU_EXECUTABLE "${START_MENU_FOLDER}\${DESCRIPTION}.lnk"
+!define START_MENU_WEBSITE "${START_MENU_FOLDER}\Website.lnk"
+!define START_MENU_UNINSTALL "${START_MENU_FOLDER}\Uninstall ${DESCRIPTION}.lnk"
+
+BrandingText "${DESCRIPTION} Windows Installer v${INSTALLER_VERSION}"
+Name "${DESCRIPTION} ${VERSION}"
+OutFile "{{ directory }}\${INSTALLER_FILENAME}"
+
+ShowInstDetails show
+ShowUnInstDetails show
+
+
+# Install main application
+Section "${DESCRIPTION}" SectionMain
+    SectionIn RO
+
+    SetOverwrite ifnewer
+    SetOutPath "$INSTDIR"
+    File "{{ license }}"
+    WriteIniStr "$INSTDIR\homepage.url" "InternetShortcut" "URL" "{{ url }}"
+    {% for root, files in filedir_list %}
+    {%- if root|string != '.' %}
+    SetOutPath "$INSTDIR\{{ root }}"
+    {%- endif %}
+    {%- for file in files %}
+    File "{{ staged_binary }}\{{ root / file }}"
+    {%- endfor %}
+    {% endfor %}
+    !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+        SetShellVarContext all
+        CreateDirectory "${START_MENU_FOLDER}"
+        CreateShortCut "${START_MENU_EXECUTABLE}" "${EXECUTABLE}"
+        CreateShortCut "${START_MENU_WEBSITE}" "$INSTDIR\homepage.url"
+        CreateShortCut "${START_MENU_UNINSTALL}" "${UNINST_FILENAME}"
+    !insertmacro MUI_STARTMENU_WRITE_END
+
+    {%- if shells %}
+    {%- macro add_verbs(path) %}
+    WriteRegStr HKLM "{{ path }}\shell" "" "{% if shells|length > 1 %}{{ shells[1] }}{% endif %}"
+    {%- for shell in shells %}
+    {%- if shell == 'open' %}
+    WriteRegStr HKLM "{{ path }}\shell\{{ shell }}" "LegacyDisable" ""
+    {%- endif %}
+    WriteRegStr HKLM "{{ path }}\shell\{{ shell }}" "" "&{{ shell|capitalize }}"
+    WriteRegStr HKLM "{{ path }}\shell\{{ shell }}\command" "" '"${EXECUTABLE}" "%1"'
+    {%- endfor %}
+    {%- endmacro %}
+
+    # Create files association.
+    WriteRegStr HKLM "${APP_PATHS_KEY}" "" "${EXECUTABLE}"
+    WriteRegDword HKLM "${APP_PATHS_KEY}" "UseUrl" 1
+
+    WriteRegStr HKLM "${APPLICATION_KEY}" "FriendlyAppName" "${DESCRIPTION}"
+    {{ add_verbs("${APPLICATION_KEY}") }}
+
+    WriteRegStr HKLM "${FILE_ASSOC_KEY}" "" ""
+
+    WriteRegStr HKLM "${MEDIA_CLIENT_KEY}\Capabilities" "ApplicationName" "${NAME}"
+    WriteRegStr HKLM "${MEDIA_CLIENT_KEY}\Capabilities" "ApplicationDescription" "${DESCRIPTION}"
+
+    WriteRegStr HKLM "${PROG_ID_KEY}" "" "${NAME}"
+    WriteRegDword HKLM "${PROG_ID_KEY}" "EditFlags" 65536
+    WriteRegStr HKLM "${PROG_ID_KEY}" "FriendlyTypeName" "${DESCRIPTION}"
+    WriteRegStr HKLM "${PROG_ID_KEY}\DefaultIcon" "" "${EXECUTABLE},0"
+    {{ add_verbs("${PROG_ID_KEY}") }}
+    {% for extension, mime in extensions %}
+    !define EXTENSION_KEY_{{ extension }} "SOFTWARE\Classes\{{ extension }}"
+    WriteRegStr HKLM "${EXTENSION_KEY_{{ extension }}}" "Content Type" "{{ mime }}"
+    WriteRegStr HKLM "${EXTENSION_KEY_{{ extension }}}" "PerceivedType" "{{ media }}"
+    WriteRegStr HKLM "${EXTENSION_KEY_{{ extension }}}\OpenWithProgIds" "${NAME}" ""
+    WriteRegStr HKLM "${MEDIA_CLIENT_KEY}\Capabilities\FileAssociations" "{{ extension }}" "${NAME}"
+    {% endfor %}
+    {%- endif %}
+SectionEnd
+
+# Create uninstaller.
+Section -Uninstaller
+    WriteUninstaller "${UNINST_FILENAME}"
+    WriteRegStr ${UNINST_PROG_ID_KEY} "${UNINST_KEY}" "DisplayIcon" "${EXECUTABLE}"
+    WriteRegStr ${UNINST_PROG_ID_KEY} "${UNINST_KEY}" "DisplayName" "$(^Name)"
+    WriteRegStr ${UNINST_PROG_ID_KEY} "${UNINST_KEY}" "DisplayVersion" "${VERSION}"
+
+    ${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
+    IntFmt $0 "0x%08X" $0
+    WriteRegDword ${UNINST_PROG_ID_KEY} "${UNINST_KEY}" "EstimatedSize" "$0"
+
+    WriteRegStr ${UNINST_PROG_ID_KEY} "${UNINST_KEY}" "Publisher" "${DESCRIPTION} Team"
+    WriteRegStr ${UNINST_PROG_ID_KEY} "${UNINST_KEY}" "UninstallString" "${UNINST_FILENAME}"
+SectionEnd
+
+# --- Uninstallation section ---
+Section Uninstall
+    {%- for root, files in filedir_list|reverse %}
+    {%- for file in files %}
+    Delete "$INSTDIR\{{ root / file }}"
+    {%- endfor %}
+    {%- if root|string != '.' %}
+    RMDir "$INSTDIR\{{ root }}"
+    {% endif %}
+    {%- endfor %}
+
+    Delete "$INSTDIR\LICENSE"
+    Delete "$INSTDIR\homepage.url"
+    Delete "${UNINST_FILENAME}"
+    RMDir "$INSTDIR"
+
+    # Delete Start Menu items.
+    !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
+        SetShellVarContext all
+        Delete "${START_MENU_EXECUTABLE}"
+        Delete "${START_MENU_WEBSITE}"
+        Delete "${START_MENU_UNINSTALL}"
+        RmDir "${START_MENU_FOLDER}"
+        DeleteRegKey /ifempty HKCR "Software\${NAME}"
+
+    Delete "$DESKTOP\${DESCRIPTION}.lnk"
+
+    # Delete registry keys.
+    DeleteRegKey ${UNINST_PROG_ID_KEY} "${UNINST_KEY}"
+
+    {%- if shells %}
+    DeleteRegKey HKLM "${APP_PATHS_KEY}"
+    DeleteRegKey HKLM "${APPLICATION_KEY}"
+    DeleteRegKey HKLM "${FILE_ASSOC_KEY}"
+    DeleteRegKey HKLM "${MEDIA_CLIENT_KEY}"
+    DeleteRegKey HKLM "${PROG_ID_KEY}"
+    {% for extension, mime in extensions %}
+    DeleteRegValue HKLM "SOFTWARE\Classes\{{ extension }}\OpenWithProgIds" "${NAME}"
+    DeleteRegValue HKLM "${MEDIA_CLIENT_KEY}\Capabilities\FileAssociations" "{{ extension }}"
+    {%- endfor %}
+    {%- endif %}
+SectionEnd
+
+VIProductVersion "${INSTALLER_VERSION}.0.0"
+VIAddVersionKey ProductName "${NAME}"
+VIAddVersionKey Comments "{{ comments }}"
+VIAddVersionKey CompanyName "{{ company }}"
+VIAddVersionKey LegalCopyright "{{ copyright }}"
+VIAddVersionKey FileDescription "${DESCRIPTION} Application Installer"
+VIAddVersionKey FileVersion "${INSTALLER_VERSION}.0.0"
+VIAddVersionKey ProductVersion "${VERSION}.0"
+VIAddVersionKey OriginalFilename "${INSTALLER_FILENAME}"

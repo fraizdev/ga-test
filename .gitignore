@@ -1,0 +1,37 @@
+# Python-generated files
+__pycache__/
+build/
+dist/
+installers/
+
+*.egg
+*.egg-info
+*.log
+*.py[cod]
+
+# Virtual environments
+.venv
+.tox
+
+# Test / coverage reports
+.coverage
+.coverage.*
+.COVERAGE.*
+coverage.xml
+
+# Cache
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# JS
+node_modules/
+
+# Auto-generated version
+_version.py
+
+# Docs
+docs/_build/
+
+# Secrets
+.secrets.toml
