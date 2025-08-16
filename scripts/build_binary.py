@@ -1,6 +1,5 @@
 import argparse
 import hashlib
-import platform
 import shutil
 import tarfile
 import zipfile
@@ -20,11 +19,10 @@ def hash_file(filepath: Path) -> str:
 
 
 def archive(packaging_path: Path, files: list[tuple[Path, Path]]) -> None:
-    system = platform.system()
-    archive_path = packaging_path.with_suffix('.zip' if system != 'Windows' else '.tar.gz')
+    archive_path = packaging_path.with_suffix('.zip' if windows_check() else '.tar.gz')
     archive_path.parent.mkdir(parents=True, exist_ok=True)
 
-    if system == 'Windows':
+    if windows_check():
         with zipfile.ZipFile(archive_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
             for root, file in files:
                 zipf.write(file, arcname=file.relative_to(root))
@@ -71,8 +69,7 @@ def build(project: Project, build_path: Path, default_args: list[str]) -> list[t
         run_command(default_args + args)
 
         dist_dir = out_dir / f'{script.path.stem}.dist'
-        system = platform.system()
-        if system != 'Windows':
+        if not windows_check():
             app_path = dist_dir / script.name
             app_path.chmod(app_path.stat().st_mode | 0o111)
 

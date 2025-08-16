@@ -16,19 +16,17 @@ env:
   GTK_ROOT: C:\gtk-build\gtk\x64\release
 
 jobs:
-  gtk:
-    name: Prepare gtk ${{ matrix.job.target }} (${{ matrix.job.os }})
+  binaries:
+    name: Binary ${{ matrix.job.target }} (${{ matrix.job.os }})
     runs-on: ${{ matrix.job.os }}
     strategy:
       fail-fast: false
       matrix:
         job:
-        # Windows
-        - target: x86_64-pc-windows-msvc
-          os: windows-2022
+        - target: x86_64-unknown-linux-gnu
+          os: ubuntu-22.04
           use-dist: true
-        - target: i686-pc-windows-msvc
-          os: windows-2022
+          cross: true
 
     steps:
       - name: Checkout code
@@ -47,8 +45,29 @@ jobs:
           enable-cache: true
           prune-cache: false
 
-      - name: Cache GTK Build
-        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+      - name: Seed pip
+        run: uv venv --seed
+
+      - name: Install the project
+        run: |
+          uv sync --locked --group release --no-default-groups
+
+      - name: Build binary
+        run: |
+          uv run scripts/build_binary.py packaging --archive --suffix "${{ matrix.job.target }}"
+
+      - name: Upload staged archive
+        if: runner.os != 'Linux'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          path: C:\gtk-build
-          key: gtk-${{ matrix.job.target }}-${{ github.event.release.tag_name || github.ref_name }}
+          name: staged-${{ runner.os }}-${{ matrix.job.target }}
+          path: packaging/*
+          if-no-files-found: error
+
+      - name: Upload archive
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: standalone-${{ matrix.job.target }}
+          path: packaging/*
+          if-no-files-found: error

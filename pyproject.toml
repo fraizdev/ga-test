@@ -74,7 +74,7 @@ typing = [
 ]
 
 [project.scripts]
-gat = "gat.gtk4:start"
+gat = "ga_test.gtk4:start"
 
 [project.urls]
 Homepage = "http://ga-test.org"
@@ -96,10 +96,10 @@ exclude_lines = [
 
 [tool.coverage.run]
 branch = true
-source = ["ga-test", "tests"]
+source = ["ga_test", "tests"]
 
 [tool.hatch.build.hooks.version]
-path = "src/ga-test/_version.py"
+path = "src/ga_test/_version.py"
 
 [tool.hatch.version]
 source = "uv-dynamic-versioning"
