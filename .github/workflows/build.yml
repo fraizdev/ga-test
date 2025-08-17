@@ -50,6 +50,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y deluge-gtk
           sudo apt-get install -y \
+            pygobject \
             pkg-config \
             gobject-introspection \
             python3-gi \
