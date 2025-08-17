@@ -49,6 +49,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
+            girepository-2.0 \
             libgirepository1.0-dev \
             gir1.2-gtk-4.0 \
             libgtk-4-dev \
@@ -56,6 +57,9 @@ jobs:
             libcairo2-dev \
             libgdk-pixbuf-2.0-dev \
             libpango1.0-dev
+            
+      - name: Set PKG_CONFIG_PATH
+        run: echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig" >> $GITHUB_ENV
       
       - name: Seed pip
         run: uv venv --seed
