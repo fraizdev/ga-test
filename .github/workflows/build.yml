@@ -56,7 +56,9 @@ jobs:
             gir1.2-gtk-4.0 \
             libcairo2-dev \
             python3-cairo-dev \
-            python-gi-dev
+            python-gi-dev \
+            python3-gi \
+            python3-gi-cairo
             
       - name: Set PKG_CONFIG_PATH
         run: echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig" >> $GITHUB_ENV
