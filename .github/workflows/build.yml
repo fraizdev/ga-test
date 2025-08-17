@@ -50,7 +50,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y deluge-gtk
           sudo apt-get install -y \
-            glib2.0
+            glib2.0 \
+            gobject-introspection \
+            cairo \
+            gtk4 \
+            pygobject \
+            gtkmm
             
       - name: Set PKG_CONFIG_PATH
         run: echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig" >> $GITHUB_ENV
