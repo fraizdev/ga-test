@@ -50,8 +50,7 @@ jobs:
       - name: Install pygobject3
         run: |
           brew install pygobject3
-          brew install glib
-          brew link glib
+          brew install gtk4
 
       - name: Install the project
         run: |
