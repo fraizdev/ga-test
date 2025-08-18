@@ -6,6 +6,10 @@ on:
       - v*
     branches:
       - master
+  pull_request:
+    release:
+      types:
+        - published
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -91,14 +95,14 @@ jobs:
             os: windows-latest
             use-dist: true
           - target: i686-pc-windows-msvc
-            os: windows-lates
+            os: windows-latest
           # macOS
           - target: aarch64-apple-darwin
             os: macos-latest
             use-dist: true
           - target: x86_64-apple-darwin
             os: macos-latest
-            use-dist: truet
+            use-dist: true
 
     steps:
       - name: Checkout code
