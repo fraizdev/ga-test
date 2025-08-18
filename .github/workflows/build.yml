@@ -46,6 +46,10 @@ jobs:
 
       - name: Seed pip
         run: uv venv --seed
+        
+      - name: Install pygobject3
+        run: |
+          brew install pygobject3
 
       - name: Install the project
         run: |
