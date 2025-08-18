@@ -39,12 +39,6 @@ jobs:
           enable-cache: true
           prune-cache: false
           
-      - name: Install pygobject3
-        run: |
-          brew install python@3.13
-          brew install pygobject3
-          brew install gtk4
-          
       - name: Seed pip
         run: uv venv --seed
 
