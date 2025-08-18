@@ -49,16 +49,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            software-properties-common \
-            build-essential \
-            gir1.2-freedesktop-dev \
-            gir1.2-girepository-3.0-dev \
-            gir1.2-gtk-4.0 \
-            gobject-introspection \
-            libcairo2-dev \
-            libgirepository-2.0-dev \
-            libglib2.0-dev \
-            libgtk-4-1
+            libgirepository-2.0-dev
     
       - name: Set PKG_CONFIG_PATH
         run: echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig" >> $GITHUB_ENV
