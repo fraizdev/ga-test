@@ -17,7 +17,7 @@ concurrency:
 
 env:
   PYTHON_VERSION: "3.13"
-  GTK_ROOT: ${{ github.workspace }}\gtk-build
+  GTK_ROOT: ${{ github.workspace }}\gtk
 
 jobs:
   gtk:
@@ -54,7 +54,7 @@ jobs:
         id: cache-gtk
         uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
         with:
-          path: C:\gtk-build\gtk\x64\release
+          path: ${{ env.GTK_ROOT }}
           key: gtk-${{ matrix.target }}-${{ github.event.release.tag_name || github.ref_name }}
           lookup-only: true
           
@@ -66,7 +66,8 @@ jobs:
       - name: Archive GTK4 runtime
         if: steps.cache-gtk.outputs.cache-hit != 'true'
         run: |
-          7z a -tzip GTK4_Gvsbuild-${{ matrix.target }}.zip C:\gtk-build\gtk\x64\release\*
+          Move-Item -Path "C:\gtk-build\gtk\x64\release" -Destination "${env:GTK_ROOT}"
+          7z a -tzip GTK4_Gvsbuild-${{ matrix.target }}.zip ${env:GTK_ROOT}\*
 
       - name: Upload GTK4_Gvsbuild-${{ matrix.target }}.zip
         if: steps.cache-gtk.outputs.cache-hit != 'true'
