@@ -50,23 +50,26 @@ jobs:
       - name: Seed pip
         run: uv venv --seed
 
-      - name: Cache GTK Build
+      - name: Cache GTK4 Build
         id: cache-gtk
         uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
         with:
           path: C:\gtk-build\gtk\x64\release
           key: gtk-${{ matrix.target }}-${{ github.event.release.tag_name || github.ref_name }}
-
+          lookup-only: true
+          
       - name: Build GTK4
         if: steps.cache-gtk.outputs.cache-hit != 'true'
         run: |
           uv run --only-group gtk gvsbuild build --ninja-opts -j2 --enable-gi --py-wheel gtk4 pygobject
 
-      - name: Archive GTK runtime
+      - name: Archive GTK4 runtime
+        if: steps.cache-gtk.outputs.cache-hit != 'true'
         run: |
           7z a -tzip GTK4_Gvsbuild-${{ matrix.target }}.zip C:\gtk-build\gtk\x64\release\*
 
       - name: Upload GTK4_Gvsbuild-${{ matrix.target }}.zip
+        if: steps.cache-gtk.outputs.cache-hit != 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: GTK4_Gvsbuild-${{ matrix.target }}.zip
@@ -113,7 +116,7 @@ jobs:
           enable-cache: true
           prune-cache: false
 
-      - name: Cache GTK Build
+      - name: Cache GTK4 Build Artifacts (Windows)
         if: runner.os == 'Windows'
         uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
         with:
@@ -121,7 +124,7 @@ jobs:
           key: gtk-${{ matrix.target }}-${{ github.event.release.tag_name || github.ref_name }}
           fail-on-cache-miss: true
 
-      - name: Install GTK4 dependencies
+      - name: Install GTK Development Dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
@@ -129,18 +132,18 @@ jobs:
             libcairo2-dev \
             libgirepository-2.0-dev
         
-      - name: Add Env Gtk
+      - name: Add GTK4 Environment Paths (Windows)
         if: runner.os == 'Windows'
         run: |
           echo "${env:GTK_ROOT}\lib" | Out-File -FilePath $env:GITHUB_PATH -Append
           echo "${env:GTK_ROOT}\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
           echo "${env:GTK_ROOT}" | Out-File -FilePath $env:GITHUB_PATH -Append
           
-      - name: Install the project
+      - name: Synchronize Project Dependencies
         run: |
           uv sync --locked --group release --no-default-groups
 
-      - name: Reinstall Gtk
+      - name: Reinstall GTK4 Python Wheels (Windows)
         if: runner.os == 'Windows'
         run: |
           uv pip install --force-reinstall (Resolve-Path ${env:GTK_ROOT}\wheels\PyGObject*.whl)
