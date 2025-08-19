@@ -128,6 +128,7 @@ jobs:
         with:
           path: C:\gtk-build
           key: gtk-${{ matrix.job.target }}-${{ github.event.release.tag_name || github.ref_name }}
+          fail-on-cache-miss: true
 
       - name: Install GTK4 dependencies
         if: runner.os == 'Linux'
