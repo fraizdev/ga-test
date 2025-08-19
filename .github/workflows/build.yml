@@ -17,7 +17,7 @@ concurrency:
 
 env:
   PYTHON_VERSION: "3.13"
-  GTK_ROOT: ${{ github.workspace }}\gtk
+  GTK_ROOT: C:\gtk-build\gtk\x64\release
 
 jobs:
   gtk:
@@ -48,9 +48,8 @@ jobs:
         id: cache-gtk
         uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
         with:
-          path: gtk
+          path: C:\gtk-build
           key: gtk-${{ matrix.target }}-${{ github.event.release.tag_name || github.ref_name }}
-          lookup-only: true
           
       - name: Build GTK4
         if: steps.cache-gtk.outputs.cache-hit != 'true'
@@ -58,13 +57,10 @@ jobs:
           uv run --only-group gtk gvsbuild build --ninja-opts -j2 --enable-gi --py-wheel gtk4 pygobject
 
       - name: Archive GTK4 runtime
-        if: steps.cache-gtk.outputs.cache-hit != 'true'
         run: |
-          Move-Item -Path "C:\gtk-build\gtk\x64\release" -Destination "${env:GTK_ROOT}"
           7z a -tzip GTK4_Gvsbuild-${{ matrix.target }}.zip ${env:GTK_ROOT}\*
 
-      - name: Upload GTK4_Gvsbuild-${{ matrix.target }}.zip
-        if: steps.cache-gtk.outputs.cache-hit != 'true'
+      - name: Upload GTK4_Gvsbuild-${{ matrix.target }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: GTK4_Gvsbuild-${{ matrix.target }}.zip
@@ -115,7 +111,7 @@ jobs:
         if: runner.os == 'Windows'
         uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
         with:
-          path: gtk
+          path: C:\gtk-build
           key: gtk-${{ matrix.target }}-${{ github.event.release.tag_name || github.ref_name }}
           fail-on-cache-miss: true
 
