@@ -55,15 +55,11 @@ jobs:
         run: |
           uv run --only-group gtk gvsbuild build --ninja-opts -j2 --enable-gi --py-wheel gtk4 pygobject
 
-      - name: Archive GTK4 runtime
-        run: |
-          7z a -tzip GTK4_Gvsbuild-${{ matrix.target }}.zip ${env:GTK_ROOT}\*
-
-      - name: Upload GTK4_Gvsbuild-${{ matrix.target }}.zip
+      - name: Upload GTK4_Gvsbuild-${{ matrix.target }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: GTK4_Gvsbuild-${{ matrix.target }}
-          path: GTK4_Gvsbuild-${{ matrix.target }}.zip
+          path: ${{ env.GTK_ROOT }}/*
 
   binaries:
     name: Binary ${{ matrix.target }} (${{ matrix.os }})
