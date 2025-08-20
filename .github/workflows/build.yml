@@ -29,6 +29,11 @@ jobs:
         os: [windows-latest]
 
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        with:
+          egress-policy: audit
+
       - name: Checkout code
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
@@ -49,7 +54,7 @@ jobs:
         with:
           path: ${{ env.GTK_ROOT }}
           key: gtk-${{ matrix.target }}-${{ github.event.release.tag_name || github.ref_name }}
-          
+
       - name: Build GTK4
         if: steps.cache-gtk.outputs.cache-hit != 'true'
         run: |
@@ -91,6 +96,11 @@ jobs:
             os: macos-latest
 
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        with:
+          egress-policy: audit
+
       - name: Checkout code
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
@@ -117,14 +127,14 @@ jobs:
           sudo apt-get install -y \
             libcairo2-dev \
             libgirepository-2.0-dev
-        
+
       - name: Add GTK4 Environment Paths (Windows)
         if: runner.os == 'Windows'
         run: |
           echo "${env:GTK_ROOT}\lib" | Out-File -FilePath $env:GITHUB_PATH -Append
           echo "${env:GTK_ROOT}\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
           echo "${env:GTK_ROOT}" | Out-File -FilePath $env:GITHUB_PATH -Append
-          
+
       - name: Synchronize Project Dependencies
         run: |
           uv sync --locked --group release --no-default-groups
