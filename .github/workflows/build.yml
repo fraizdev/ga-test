@@ -48,7 +48,7 @@ jobs:
         id: cache-gtk
         uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
         with:
-          path: C:\gtk-build
+          path: ${{ env:GTK_ROOT }}
           key: gtk-${{ matrix.target }}-${{ github.event.release.tag_name || github.ref_name }}
           
       - name: Build GTK4
@@ -60,10 +60,10 @@ jobs:
         run: |
           7z a -tzip GTK4_Gvsbuild-${{ matrix.target }}.zip ${env:GTK_ROOT}\*
 
-      - name: Upload GTK4_Gvsbuild-${{ matrix.target }}
+      - name: Upload GTK4_Gvsbuild-${{ matrix.target }}.zip
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: GTK4_Gvsbuild-${{ matrix.target }}.zip
+          name: GTK4_Gvsbuild-${{ matrix.target }}
           path: GTK4_Gvsbuild-${{ matrix.target }}.zip
 
   binaries:
@@ -111,7 +111,7 @@ jobs:
         if: runner.os == 'Windows'
         uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
         with:
-          path: C:\gtk-build
+          path: ${{ env:GTK_ROOT }}
           key: gtk-${{ matrix.target }}-${{ github.event.release.tag_name || github.ref_name }}
           fail-on-cache-miss: true
 
@@ -137,8 +137,7 @@ jobs:
       - name: Reinstall GTK4 Python Wheels (Windows)
         if: runner.os == 'Windows'
         run: |
-          uv pip install --force-reinstall (Resolve-Path ${env:GTK_ROOT}\wheels\PyGObject*.whl)
-          uv pip install --force-reinstall (Resolve-Path ${env:GTK_ROOT}\wheels\pycairo*.whl)
+          uv pip install --force-reinstall --no-index --find-links="${env:GTK_ROOT}\python" pycairo PyGObject
 
       - name: Build binary
         run: |
